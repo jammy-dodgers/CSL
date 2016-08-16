@@ -16,6 +16,7 @@ namespace RASM
         int y;
         char[][] code;
         bool stop;
+        bool breakOut;
         
         public CSLAAI2D(string[] arg)
         {
@@ -23,7 +24,7 @@ namespace RASM
             code = new char[arg.Count()][];
             for (int i = 0; i < code.Count(); i++)
             {
-                code[i] = arg[i].PadRight(longestLen, 'Z').ToCharArray();
+                code[i] = arg[i].PadRight(longestLen, ' ').ToCharArray();
             }
             //foreach (char[] c in code)
             //{
@@ -51,6 +52,20 @@ namespace RASM
             {
                 direction = Direction.Up;
             })));
+            commands.Add('{', new Command("CLF", "If pop == 0, move left. Else, keep direction.", new Action(() =>
+            {
+                if (memory.Pop() == 0)
+                {
+                    direction = Direction.Left;
+                }
+            })));
+            commands.Add('}', new Command("CRF", "If pop != 0, move right. Else, keep direction.", new Action(() =>
+            {
+                if (memory.Pop() != 0)
+                {
+                    direction = Direction.Right;
+                }
+            })));
             commands.Add('1', new Command("ONE", "Push a 1 onto the stack.", new Action(() =>
             {
                 memory.Push(1);
@@ -58,6 +73,14 @@ namespace RASM
             commands.Add('D', new Command("DUP", "Copy the top memory item.", new Action(() =>
             {
                 memory.Push(memory.Peek());
+            })));
+            commands.Add('d', new Command("DPW", "Copy the whole stack on top of itsself.", new Action(() =>
+            {
+                var tempStack = new Stack<int>(memory);
+                foreach (var val in tempStack)
+                {
+                    memory.Push(val);
+                }
             })));
             commands.Add('P', new Command("PRT", "Print the top memory item", new Action(() =>
             {
@@ -70,6 +93,19 @@ namespace RASM
             commands.Add('N', new Command("PRN", "Write a line terminator", new Action(() =>
             {
                 Console.Write(Environment.NewLine);
+            })));
+            commands.Add('R', new Command("REV", "Reverse the stack", new Action(() =>
+            {
+                memory = new Stack<int>(memory);
+            })));
+            commands.Add('F', new Command("FLP", "Reverse the stack", new Action(() =>
+            {
+                var top = memory.Pop();
+                memory = new Stack<int>(memory);
+                var bottom = memory.Pop();
+                memory.Push(top);
+                memory = new Stack<int>(memory);
+                memory.Push(bottom);
             })));
             commands.Add('+', new Command("INC", "Increment the top memory item", new Action(() =>
             {
@@ -102,6 +138,10 @@ namespace RASM
             {
                 memory.Pop();
             })));
+            commands.Add('$', new Command("BRK", "Break out of batch execution.", new Action(() =>
+            {
+                breakOut = true;
+            })));
             stop = false;
         }
 
@@ -118,10 +158,11 @@ namespace RASM
             }
             if (c == 'E')
             {
-                while (commandStack.Count != 0)
+                while (commandStack.Count != 0 && breakOut == false)
                 {
                     commandStack.Pop().Invoke();
                 }
+                breakOut = false;
             }
             if (c == '!')
             {
