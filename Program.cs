@@ -37,9 +37,11 @@ They are executed immediately."
                 var file = System.IO.File.ReadAllLines(args[0]);
                 CSLAAI2D rasm = new CSLAAI2D(file);
                 while (!rasm.DoRun()) ;
-                Console.ReadKey();
-                Console.CursorLeft--;
-                Console.Write(" ");
+                if (Console.ReadKey().Key != ConsoleKey.Enter)
+                {
+                    Console.CursorLeft--;
+                    Console.Write(" ");
+                }
             }
         }
     }

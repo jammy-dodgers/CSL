@@ -66,6 +66,10 @@ namespace RASM
                     direction = Direction.Right;
                 }
             })));
+            commands.Add('I', new Command("INP", "Push a val from STDIN", new Action(() =>
+            {
+                memory.Push(Console.Read());
+            })));
             commands.Add('1', new Command("ONE", "Push a 1 onto the stack.", new Action(() =>
             {
                 memory.Push(1);
