@@ -113,26 +113,32 @@ namespace RASM
             })));
             commands.Add('+', new Command("INC", "Increment the top memory item", new Action(() =>
             {
+                StackHas(1);
                 memory.Push(memory.Pop() + 1);
             })));
             commands.Add('-', new Command("DEC", "Decrement the top memory item", new Action(() =>
             {
+                StackHas(1);
                 memory.Push(memory.Pop() - 1);
             })));
             commands.Add('&', new Command("ADD", "Add the top two items", new Action(() =>
             {
+                StackHas(2);
                 memory.Push(memory.Pop() + memory.Pop());
             })));
             commands.Add('*', new Command("MUL", "Multiply the top two items", new Action(() =>
             {
+                StackHas(2);
                 memory.Push(memory.Pop() * memory.Pop());
             })));
             commands.Add('_', new Command("SUB", "Subtract the top two items (pop - pop)", new Action(() =>
             {
+                StackHas(2);
                 memory.Push(memory.Pop() - memory.Pop());
             })));
             commands.Add('~', new Command("SWT", "Switch the top two items", new Action(() =>
             {
+                StackHas(2);
                 var p1 = memory.Pop();
                 var p2 = memory.Pop();
                 memory.Push(p1);
@@ -140,6 +146,7 @@ namespace RASM
             })));
             commands.Add('|', new Command("NUL", "Pop the top item, and do nothing with it.", new Action(() =>
             {
+                StackHas(1);
                 memory.Pop();
             })));
             commands.Add('$', new Command("BRK", "Break out of batch execution.", new Action(() =>
@@ -147,6 +154,28 @@ namespace RASM
                 breakOut = true;
             })));
             stop = false;
+            commands.Add('?', new Command("CEX", "If pop == 0, pop the top command and invoke. Else pop top command and discard.", new Action(() =>
+            {
+                StackHas(1);
+                if (memory.Pop() == 0)
+                {
+                    commandStack.Pop()();
+                }
+                else
+                {
+                    commandStack.Pop();
+                }
+            })));
+            stop = false;
+        }
+
+        //make sure the stack has atleast X items, otherwise terminate
+        public void StackHas(int count)
+        {
+            if (memory.Count < count)
+            {
+                Environment.Exit(0); 
+            }
         }
 
         public bool DoRun()
