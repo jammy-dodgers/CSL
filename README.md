@@ -1,5 +1,5 @@
 # CSL
-## I would remove this repo as I clean my GitHub account, however the language is on esolangs.org and was used on codegolf.stackexchange.com, so I shall leave it here. The code featured here does not reflect my current programming skill, as it is very old.
+## I would remove this repo as I clean up my GitHub account, however the language is on esolangs.org and was used on codegolf.stackexchange.com, so I shall leave it here. The code featured here does not reflect my current programming skill, as it is very old.
 
 
 Running the EXE by dragging a file on it runs it.
